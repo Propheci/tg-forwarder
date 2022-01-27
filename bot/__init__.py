@@ -87,7 +87,7 @@ except Exception as ex:
 
 try:
     DOC_EXT = os.environ.get('DOC_EXT', "pdf epub azw3 zip mp3 m4b").strip()
-    DOC_EXT = DOC_EXT.split()
+    DOC_EXT = [ext.lower() for ext in DOC_EXT.split()]
     if not DOC_EXT:
         logger.critical(f'Missing value for "DOC_EXT" in config')
 except Exception as ex:
