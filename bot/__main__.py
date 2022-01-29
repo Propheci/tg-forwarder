@@ -51,7 +51,7 @@ async def forward_message(_: Client, message: Message):
     for destination in DESTINATION_IDS:
         while True:
             try:
-                await message.forward(chat_id=destination)
+                await message.copy(chat_id=destination)
                 break
             except FloodWait as fw:
                 await asyncio.sleep(fw.x)
