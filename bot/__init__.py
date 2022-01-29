@@ -120,7 +120,7 @@ class Filters:
     fwd_message = (
         source_chat_filter
         & (~filters.edited)
-        & (filters.audio | filters.document | filters.voice)
+        & (filters.audio | filters.document | filters.voice | filters.photo)
     )
 
     up_cmd = (

@@ -33,6 +33,8 @@ async def forward_message(_: Client, message: Message):
         media = message.audio
     elif message.voice is not None:
         media = message.voice
+    elif message.photo is not None:
+        media = message.photo
     elif message.document is not None:
         doc = message.document
         if doc.file_name is not None:
@@ -49,10 +51,7 @@ async def forward_message(_: Client, message: Message):
     for destination in DESTINATION_IDS:
         while True:
             try:
-                await message.copy(
-                    chat_id=destination,
-                    caption=message.caption
-                )
+                await message.forward(chat_id=destination)
                 break
             except FloodWait as fw:
                 await asyncio.sleep(fw.x)
