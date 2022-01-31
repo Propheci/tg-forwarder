@@ -26,7 +26,10 @@ else:
     exit(1)
 
 @app.on_message(filters=Filters.fwd_message)
-async def forward_message(_: Client, message: Message):
+async def forward_message(client: Client, message: Message):
+
+    if message.chat is None:
+        raise ContinuePropagation
 
     media = None
     if message.audio is not None:
@@ -57,6 +60,11 @@ async def forward_message(_: Client, message: Message):
                 await asyncio.sleep(fw.x)
             except Exception as ex:
                 logger.error(f'Error while forwarding to {destination=}: {ex}')
+        await client.send_reaction(
+            chat_id=message.chat.id,
+            message_id=message.message_id,
+            emoji="👍"
+        )
 
     raise ContinuePropagation
 
