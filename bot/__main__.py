@@ -52,14 +52,12 @@ async def forward_message(client: Client, message: Message):
         raise ContinuePropagation
 
     for destination in DESTINATION_IDS:
-        while True:
-            try:
-                await message.copy(chat_id=destination)
-                break
-            except FloodWait as fw:
-                await asyncio.sleep(fw.x)
-            except Exception as ex:
-                logger.error(f'Error while forwarding to {destination=}: {ex}')
+        try:
+            await message.copy(chat_id=destination)
+        except FloodWait as fw:
+            await asyncio.sleep(fw.x)
+        except Exception as ex:
+            logger.error(f'Error while forwarding to {destination=}: {ex}')
         await client.send_reaction(
             chat_id=message.chat.id,
             message_id=message.message_id,
