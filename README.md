@@ -19,7 +19,8 @@ To forward audiobooks and ebooks from one telegram chat to other
 | `SUDO_USERS`        | Space separated user IDs                                                                                       | -                           |
 | `SOURCE_IDS`        | Space separated chat IDs of the groups from where to forward                                                   | -                           |
 | `DESTINATION_IDS`   | Space separated chat IDs of the groups to forward to                                                           | -                           |
-| `DOC_EXT`           | Extensions of the Telegram Documents to forward (bot checks `.{ext}` in end or `.{ext}.` anywhere in the name) | `pdf epub azw3 zip mp3 m4b` |
+| `HASHTAGS`          | The hashtags separated by space without `#` sign (eg. `hashtag1 hashtag2`)                                     | -                           |
+| `CASE_SENSITIVE`    | If the hashtags should be matched case sensitively or not (Uncomment to enable)                                | -                           |
 
 ## Aᴠᴀɪʟᴀʙʟᴇ Cᴏᴍᴍᴀɴᴅs
 
