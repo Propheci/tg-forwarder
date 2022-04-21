@@ -3,8 +3,8 @@ from pyrogram import Client, ContinuePropagation
 from pyrogram.types.messages_and_media import Message
 from pyrogram.errors import FloodWait
 
-from bot import ( API_HASH, API_ID,
-        BOT_TOKEN, DESTINATION_IDS, DOC_EXT, SESSION_STRING )
+from bot import ( API_HASH, API_ID, CASE_SENSITIVE,
+        BOT_TOKEN, DESTINATION_IDS, HASHTAGS, SESSION_STRING )
 from bot import logger, Filters
 
 app = None
@@ -31,24 +31,29 @@ async def forward_message(client: Client, message: Message):
     if message.chat is None:
         raise ContinuePropagation
 
-    media = None
-    if message.audio is not None:
-        media = message.audio
-    elif message.voice is not None:
-        media = message.voice
-    elif message.photo is not None:
-        media = message.photo
-    elif message.document is not None:
-        doc = message.document
-        if doc.file_name is not None:
-            doc_name = doc.file_name.lower()
-            if any([
-                ((doc_name.endswith(f'.{ext}')) or (f'.{ext}.' in doc_name))
-                for ext in DOC_EXT
-            ]):
-                media = message.document
+    to_forward = False
+    if message.entities is not None:
+        for entity in message.entities:
+            if entity.type == "hashtag":
+                hashtag = message.text[entity.offset:entity.offset+entity.length]
+                if CASE_SENSITIVE and (hashtag[1:] in HASHTAGS):
+                    to_forward = True
+                    break
+                elif not CASE_SENSITIVE and (hashtag[1:].lower() in HASHTAGS):
+                    to_forward = True
+                    break
+    if message.caption_entities is not None:
+        for entity in message.caption_entities:
+            if entity.type == "hashtag":
+                hashtag = message.caption[entity.offset:entity.offset+entity.length]
+                if CASE_SENSITIVE and (hashtag[1:] in HASHTAGS):
+                    to_forward = True
+                    break
+                elif not CASE_SENSITIVE and (hashtag[1:].lower() in HASHTAGS):
+                    to_forward = True
+                    break
 
-    if media is None:
+    if not to_forward:
         raise ContinuePropagation
 
     for destination in DESTINATION_IDS:

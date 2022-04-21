@@ -25,8 +25,8 @@ if os.path.exists(_config_path):
     API_ID, API_HASH,
     BOT_TOKEN, SESSION_STRING,
     SOURCE_IDS, DESTINATION_IDS,
-    DOC_EXT, SUDO_USERS
-) = [None for _ in range(8)]
+    HASHTAGS, SUDO_USERS, CASE_SENSITIVE
+) = [None for _ in range(9)]
 
 
 try:
@@ -85,13 +85,16 @@ except Exception as ex:
     logger.critical(f'Config variable [{SUDO_USERS=}] should have been space separated integers')
     exit(1)
 
+CASE_SENSITIVE = bool(os.environ.get("CASE_SENSITIVE", False))
+
 try:
-    DOC_EXT = os.environ.get('DOC_EXT', "pdf epub azw3 zip mp3 m4b").strip()
-    DOC_EXT = [ext.lower() for ext in DOC_EXT.split()]
-    if not DOC_EXT:
-        logger.critical(f'Missing value for "DOC_EXT" in config')
+    HASHTAGS = os.environ.get('HASHTAGS', "").strip()
+    if not CASE_SENSITIVE:
+        HASHTAGS = [ext.lower() for ext in HASHTAGS.split()]
+    if not HASHTAGS:
+        logger.critical(f'Missing value for "HASHTAGS" in config')
 except Exception as ex:
-    logger.critical(f'Config variable [{DOC_EXT=}] should have been space separated strings')
+    logger.critical(f'Config variable [{HASHTAGS=}] should have been space separated strings')
     exit(1)
 
 # ======================== Pyrogram Filters ================================
@@ -119,8 +122,6 @@ class Filters:
 
     fwd_message = (
         source_chat_filter
-        & (~filters.edited)
-        & (filters.audio | filters.document | filters.voice | filters.photo)
     )
 
     up_cmd = (
